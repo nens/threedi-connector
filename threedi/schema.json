@@ -1,0 +1,268 @@
+{
+    "_meta": {
+        "title": "3Di API Version 1.0",
+        "url": "https://staging.3di.lizard.net/api/v1/docs/"
+    },
+    "_type": "document",
+    "active-model": {
+        "list": {
+            "_type": "link",
+            "action": "get",
+            "description": "List all active simulations for the current session\n\n    $ curl -u <username> https://3di.lizard.net/api/v1/active-model\n\nFetches model data for current session and returns the\nserialized data ``slug``, ``display_name`` and ``editable_maps``.\n\nReturns an empty response if no model data is found",
+            "url": "/api/v1/active-model"
+        }
+    },
+    "calculation": {
+        "start": {
+            "create": {
+                "_type": "link",
+                "action": "post",
+                "description": "for details and exmaples see [/api/v1/calculation/start/] [ref]\n\n[ref]: /api/v1/calculation/start/",
+                "encoding": "application/json",
+                "fields": [
+                    {
+                        "location": "form",
+                        "name": "model_slug",
+                        "required": true,
+                        "schema": {
+                            "_type": "string",
+                            "description": "Model slug/identifier",
+                            "title": "Model slug"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "organisation_uuid",
+                        "required": true,
+                        "schema": {
+                            "_type": "string",
+                            "description": "Organisation UUID",
+                            "title": "Organisation uuid"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "start",
+                        "required": true,
+                        "schema": {
+                            "_type": "string",
+                            "description": "Simulation start time in ISO 8601 format",
+                            "title": "Start"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "end",
+                        "required": true,
+                        "schema": {
+                            "_type": "string",
+                            "description": "Simulation end time in ISO 8601 format. Must be larger than start.",
+                            "title": "End"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "scenario_name",
+                        "required": true,
+                        "schema": {
+                            "_type": "string",
+                            "description": "Scenario name for saving the results",
+                            "title": "Scenario name"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "email",
+                        "schema": {
+                            "_type": "string",
+                            "description": "Email address (will be used to send updates about the simulation)",
+                            "title": "Email"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "result_uuid",
+                        "schema": {
+                            "_type": "string",
+                            "description": "",
+                            "title": "Result uuid"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "rain_events",
+                        "schema": {
+                            "_type": "array",
+                            "description": "Rain event parameters object (see Rain events below)",
+                            "title": "Rain events"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "wind_events",
+                        "schema": {
+                            "_type": "array",
+                            "description": "Wind event parameters object (see Wind events below)",
+                            "title": "Wind events"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "breaches",
+                        "schema": {
+                            "_type": "array",
+                            "description": "Breach event parameters object (see Breach event below)",
+                            "title": "Breaches"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "save_states",
+                        "schema": {
+                            "_type": "array",
+                            "description": "Save one or more simulation states (see Save states below)",
+                            "title": "Save states"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "use_saved_state",
+                        "schema": {
+                            "_type": "string",
+                            "description": "Saved state UUID. Use this for loading a saved state.",
+                            "title": "Use saved state"
+                        }
+                    },
+                    {
+                        "location": "form",
+                        "name": "store_results",
+                        "schema": {
+                            "_type": "object",
+                            "description": "Specify which type of results should be processed.",
+                            "title": "Store results"
+                        }
+                    }
+                ],
+                "url": "/api/v1/calculation/start/"
+            }
+        }
+    },
+    "startmachinetasks": {
+        "create": {
+            "_type": "link",
+            "action": "post",
+            "description": "Create a new task using a POST request. **Not recommended to use!**\nGenerally you should just start new tasks with the\n`/api/v1/calculation/start` endpoint.",
+            "url": "/api/v1/startmachinetasks/"
+        },
+        "delete": {
+            "_type": "link",
+            "action": "delete",
+            "description": "Delete a (queued) task.\n\nExample:\n\n    $ curl -u <username> -X DELETE https://3di.lizard.net/api/v1/startmachinetasks/headless:1234/",
+            "fields": [
+                {
+                    "location": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "_type": "string",
+                        "description": "",
+                        "title": ""
+                    }
+                }
+            ],
+            "url": "/api/v1/startmachinetasks/{id}/"
+        },
+        "list": {
+            "_type": "link",
+            "action": "get",
+            "description": "List queued tasks for your organisation(s). Note: each organisation will\nits own machine limits.\n\nExample:\n\n    $ curl -u <username> https://3di.lizard.net/api/v1/startmachinetasks/",
+            "url": "/api/v1/startmachinetasks/"
+        },
+        "read": {
+            "_type": "link",
+            "action": "get",
+            "description": "To view the status of a task, use the `identifier` from the headless call.\n\nExample:\n\n    $ curl -u <username> https://3di.lizard.net/api/v1/startmachinetasks/headless:1234/",
+            "fields": [
+                {
+                    "location": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "_type": "string",
+                        "description": "",
+                        "title": ""
+                    }
+                }
+            ],
+            "url": "/api/v1/startmachinetasks/{id}/"
+        },
+        "update": {
+            "_type": "link",
+            "action": "put",
+            "description": "To view the status of a task, use the `identifier` from the headless call.",
+            "fields": [
+                {
+                    "location": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "_type": "string",
+                        "description": "",
+                        "title": ""
+                    }
+                }
+            ],
+            "url": "/api/v1/startmachinetasks/{id}/"
+        }
+    },
+    "threedimodelsavedstates": {
+        "create": {
+            "_type": "link",
+            "action": "post",
+            "description": "Create a new saved state using a POST request. **Not recommended to use!**\nUse the `/api/v1/calculation/start` endpoint to create your saved states.",
+            "url": "/api/v1/threedimodelsavedstates/"
+        },
+        "delete": {
+            "_type": "link",
+            "action": "delete",
+            "description": "Delete a saved state. Example:\n\n    $ curl -u <username> -X DELETE https://3di.lizard.net/api/v1/threedimodelsavedstates/<uuid>/",
+            "fields": [
+                {
+                    "location": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "_type": "string",
+                        "description": "",
+                        "title": ""
+                    }
+                }
+            ],
+            "url": "/api/v1/threedimodelsavedstates/{id}/"
+        },
+        "list": {
+            "_type": "link",
+            "action": "get",
+            "description": "List all saved states. Example:\n\n    $ curl -u <username> https://3di.lizard.net/api/v1/threedimodelsavedstates/",
+            "url": "/api/v1/threedimodelsavedstates/"
+        },
+        "read": {
+            "_type": "link",
+            "action": "get",
+            "description": "View a saved state. Example:\n\n    $ curl -u <username> https://3di.lizard.net/api/v1/threedimodelsavedstates/<uuid>/",
+            "fields": [
+                {
+                    "location": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "_type": "string",
+                        "description": "",
+                        "title": ""
+                    }
+                }
+            ],
+            "url": "/api/v1/threedimodelsavedstates/{id}/"
+        }
+    }
+}
