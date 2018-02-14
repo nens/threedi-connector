@@ -1,3 +1,6 @@
+"""
+Most of this is copied from: https://github.com/lizardsystem/lizard-connector
+"""
 import json
 import sys
 
