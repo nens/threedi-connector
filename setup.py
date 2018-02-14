@@ -10,4 +10,4 @@ setup(
     author='Jackie Leng',
     author_email='jackie.leng@nelen-schuurmans.nl',
     url='https://github.com/nens/threedi-connector',
- )
+)
