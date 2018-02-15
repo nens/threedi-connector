@@ -21,8 +21,7 @@ Start a simulation::
     ...    organisation_uuid='61f5a464c35044c19bc7d4b42d7f58cb',
     ...    scenario_name='test-lib (this result can be deleted)',
     ...    start='2016-10-18T00:00',
-    ...    end='2016-10-18T00:30',
-    ...)
+    ...    end='2016-10-18T00:30')
     >>> sim.info
     {u'organisation_id': u'61f5a464c35044c19bc7d4b42d7f58cb',
      u'result_id': u'300f9ed8d1d54ff8b4def220a81060c8',
