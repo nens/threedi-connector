@@ -145,6 +145,7 @@ def start_simulation(*args, **kwargs):
     """Start a Simulation and return the instance."""
     sim = Simulation(*args, **kwargs)
     sim.start()
+    print("Simulation started.")
     return sim
 
 
