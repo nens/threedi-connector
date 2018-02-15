@@ -1,5 +1,4 @@
 from functools import wraps
-import base64
 import getpass
 import json
 import sys
@@ -30,14 +29,11 @@ def get_credentials_interactively():
     return username, password
 
 
-def get_authorization_headers(username, password):
-    base64string = base64.b64encode('%s:%s' % (username, password))
-    return {"Authorization": "Basic %s" % base64string}
-
-
-def authenticate_using_headers(func):
+def authenticate_interactively(func):
     """
-    Pretty much black magic.
+    Require authentication as default, and ask via stdin for username/pw
+    if it isn't supplied. Authentication can still be disabled by passing
+    ``use_auth=False``.
     """
     @wraps(func)
     def func_wrapper(*args, **kwargs):
@@ -47,22 +43,12 @@ def authenticate_using_headers(func):
         This wrapper introduces the following extra kwargs:
             use_auth (bool): enable or disable authentication completely.
                 Default: True
-            auth (tuple): A tuple containing (username, password) for basic
-                authentication. If falsy, credentials will be requested
-                interactively (from stdin)
         """
         use_auth = kwargs.pop('use_auth', True)
         if use_auth:
-            auth = kwargs.pop('auth', None)
-            if auth is None:
-                username, password = get_credentials_interactively()
-            else:
-                username, password = auth  # requests style basic auth
-            auth_header = get_authorization_headers(username, password)
-            try:
-                kwargs['headers'].update(auth_header)
-            except KeyError:
-                kwargs['headers'] = auth_header
+            auth = kwargs.get('auth')
+            if not auth:
+                kwargs['auth'] = get_credentials_interactively()
         return func(*args, **kwargs)
     return func_wrapper
 
@@ -98,17 +84,17 @@ class API(object):
     def method(self):
         return self._cache
 
-    @authenticate_using_headers
-    def get(self, params=None, headers={}):
+    @authenticate_interactively
+    def get(self, params=None, headers={}, auth=None):
         """GET request."""
         url = self._build_url()
-        return requests.get(url, params=params, headers=headers)
+        return requests.get(url, params=params, headers=headers, auth=auth)
 
-    @authenticate_using_headers
-    def post(self, data=None, headers={}):
+    @authenticate_interactively
+    def post(self, data=None, headers={}, auth=None):
         """POST request."""
         url = self._build_url()
-        return requests.post(url, data=data, headers=headers)
+        return requests.post(url, data=data, headers=headers, auth=auth)
 
     # Reflection
     def __getattr__(self, name):
