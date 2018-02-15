@@ -53,7 +53,7 @@ def authenticate_using_headers(func):
         """
         use_auth = kwargs.pop('use_auth', True)
         if use_auth:
-            auth = kwargs.get('auth', None)
+            auth = kwargs.pop('auth', None)
             if auth is None:
                 username, password = get_credentials_interactively()
             else:
