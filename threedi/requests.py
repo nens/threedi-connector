@@ -18,7 +18,7 @@ else:
     from urllib.request import urlopen
 
 
-def perform_request(url, header={}, data=None):
+def perform_request(url, data=None, headers={}):
     """
     GETs parameters from the Lizard api or POSTs data to the Lizard api.
     Defaults to GET request. Turns into a POST request if data is provided.
@@ -31,7 +31,6 @@ def perform_request(url, header={}, data=None):
         a dictionary with the response.
     """
     if data:
-        headers = header
         headers['content-type'] = "application/json"
         request_obj = urllib_request.Request(
             url,
@@ -39,14 +38,14 @@ def perform_request(url, header={}, data=None):
             data=json.dumps(data).encode('utf-8'),
         )
     else:
-        request_obj = urllib_request.Request(url, headers=header)
+        request_obj = urllib_request.Request(url, headers=headers)
     resp = urlopen(request_obj)
     content = resp.read().decode('UTF-8')
     return content
     # return json.loads(content)
 
 
-def post(url, data=None, header={}):
+def post(url, data=None, headers={}):
     """
     POST data to the api.
     Args:
@@ -55,10 +54,10 @@ def post(url, data=None, header={}):
                     data to.
         data (dict): Dictionary with the data to post to the api
     """
-    return perform_request(url, data=data, header=header)
+    return perform_request(url, data=data, headers=headers)
 
 
-def get(url, params=None, header={}):
+def get(url, params=None, headers={}):
     if params:
         url = url + '?' + urlencode(params)
-    return perform_request(url, header=header)
+    return perform_request(url, headers=headers)

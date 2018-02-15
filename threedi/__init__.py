@@ -30,23 +30,40 @@ def get_credentials_interactively():
     return username, password
 
 
-def get_authorization_header():
-    username, password = get_credentials_interactively()
+def get_authorization_headers(username, password):
     base64string = base64.b64encode('%s:%s' % (username, password))
     return {"Authorization": "Basic %s" % base64string}
 
 
-def authenticate_using_header(func):
+def authenticate_using_headers(func):
     """
     Pretty much black magic.
     """
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        headers = kwargs.pop('header', {})
-        use_auth = kwargs.pop('auth', True)
+        """
+        Wraps a HTTP method function
+
+        This wrapper introduces the following extra kwargs:
+            use_auth (bool): enable or disable authentication completely.
+                Default: True
+            auth (tuple): A tuple containing (username, password) for basic
+                authentication. If falsy, credentials will be requested
+                interactively (from stdin)
+        """
+        use_auth = kwargs.pop('use_auth', True)
         if use_auth:
-            headers.update(get_authorization_header())
-        return func(header=headers, *args, **kwargs)
+            auth = kwargs.get('auth', None)
+            if auth is None:
+                username, password = get_credentials_interactively()
+            else:
+                username, password = auth  # requests style basic auth
+            auth_header = get_authorization_headers(username, password)
+            try:
+                kwargs['headers'].update(auth_header)
+            except KeyError:
+                kwargs['headers'] = auth_header
+        return func(*args, **kwargs)
     return func_wrapper
 
 
@@ -58,7 +75,7 @@ class API(object):
     def __init__(self, cache=None, host=API_HOST_STAGING, version='v1'):
         # schema_url = urljoin(host, "api/v1/docs/")
         # endpoint_data = requests.get(
-        #     schema_url, header={'Accept': 'application/coreapi+json'}
+        #     schema_url, headers={'Accept': 'application/coreapi+json'}
         # )
         # if schema_url:
         #     self.endpoints = json.loads(endpoint_data)
@@ -81,17 +98,17 @@ class API(object):
     def method(self):
         return self._cache
 
-    @authenticate_using_header
-    def get(self, params=None, header={}):
+    @authenticate_using_headers
+    def get(self, params=None, headers={}):
         """GET request."""
         url = self._build_url()
-        return requests.get(url, params=params, header=header)
+        return requests.get(url, params=params, headers=headers)
 
-    @authenticate_using_header
-    def post(self, data=None, header={}):
+    @authenticate_using_headers
+    def post(self, data=None, headers={}):
         """POST request."""
         url = self._build_url()
-        return requests.post(url, data=data, header=header)
+        return requests.post(url, data=data, headers=headers)
 
     # Reflection
     def __getattr__(self, name):
@@ -125,14 +142,21 @@ class Simulation(object):
         self.sim_kwargs = sim_kwargs
         self._api = API()
         self._calc_endpoint = self._api.calculation.start
+        self._tasks = self._api.startmachinetasks
         self.info = None
 
     def start(self):
-        self.info = self._calc_endpoint.post(data=self.sim_kwargs)
+        info = self._calc_endpoint.post(data=self.sim_kwargs)
+        self.info = json.loads(info)
         return self.info
+
+    def tasks_in_queue(self):
+        data = self._tasks.get()
+        return json.loads(data)
 
 
 def start_simulation(*args, **kwargs):
+    """Start a Simulation and return the instance."""
     sim = Simulation(*args, **kwargs)
     sim.start()
     return sim
@@ -146,5 +170,3 @@ TEST_KWARGS = {
     "end": "2016-10-18T00:30",
     "scenario_name": "test-lib (this result can be deleted)",
 }
-
-
