@@ -20,6 +20,11 @@ else:
 
 
 def get_authorization_headers(username, password):
+    """
+    Basic authentication, see this recipe:
+    http://www.voidspace.org.uk/python/articles/authentication.shtml
+    """
+
     base64string = base64.b64encode('%s:%s' % (username, password))
     return {"Authorization": "Basic %s" % base64string}
 
