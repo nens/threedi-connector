@@ -3,6 +3,12 @@ threedi-connector
 
 Python client library for interacting with the 3Di API.
 
+Install
+-------
+
+::
+    pip install git+https://github.com/nens/threedi-connector.git
+
 Usage
 -----
 
