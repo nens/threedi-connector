@@ -10,4 +10,7 @@ setup(
     author='Jackie Leng',
     author_email='jackie.leng@nelen-schuurmans.nl',
     url='https://github.com/nens/threedi-connector',
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
+    # include_package_data=True,  # needed?
 )
