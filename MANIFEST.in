@@ -1,2 +1,6 @@
-include README.rst
-include CHANGES.rst
+# Include docs in the root.
+include *.rst
+# Include everything in our project directory.
+graft threedi
+# Exclude tests
+prune threedi/tests

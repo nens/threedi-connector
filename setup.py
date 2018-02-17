@@ -12,5 +12,5 @@ setup(
     url='https://github.com/nens/threedi-connector',
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
-    # include_package_data=True,  # needed?
+    include_package_data=True,  # needed?
 )
