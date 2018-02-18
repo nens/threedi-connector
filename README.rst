@@ -6,14 +6,16 @@ Python client library for interacting with the 3Di API.
 Install
 -------
 
-::
+.. code-block:: bash
 
     $ pip install git+https://github.com/nens/threedi-connector.git
 
 Use
 ---
 
-Start a simulation::
+Start a simulation:
+
+.. code-block:: python
 
     >>> import threedi
     >>> simulation = threedi.start_simulation(
@@ -22,11 +24,13 @@ Start a simulation::
     ...    scenario_name='test-lib (this result can be deleted)',
     ...    start='2016-10-18T00:00',
     ...    end='2016-10-18T00:30')
-    Username: <type your username>
-    Password: <type your pw>
+    Username: <your username>
+    Password: <your pw>
     Simulation started.
 
-Simulation task metadata::
+Simulation task metadata:
+
+.. code-block:: python
 
     >>> simulation.info
     {u'organisation_id': u'61f5a464c35044c19bc7d4b42d7f58cb',
@@ -37,6 +41,8 @@ Simulation task metadata::
 Running tests
 -------------
 
-Tests are run with ``pytest`` using::
+Tests are run with ``pytest``:
+
+.. code-block:: bash
 
     $ python setup.py test
