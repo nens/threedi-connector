@@ -5,14 +5,14 @@ import sys
 
 from . import requests
 
-if sys.version_info.major < 3:
-    # py2
+PY2 = sys.version_info.major == 2
+
+if PY2:
     from urllib import urlencode
     from urlparse import urljoin
     import urllib2 as urllib_request
     from urllib2 import urlopen
 else:
-    # py3
     from urllib.parse import urlencode
     from urllib.parse import urljoin
     import urllib.request as urllib_request
@@ -26,7 +26,7 @@ API_HOST_PRODUCTION = "https://3di.lizard.net/"
 
 def get_credentials_interactively():
     username = raw_input("Username: ")
-    password = getpass.getpass()
+    password = getpass.getpass("Password: ")
     return username, password
 
 

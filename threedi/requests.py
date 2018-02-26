@@ -5,14 +5,14 @@ import base64
 import json
 import sys
 
-if sys.version_info.major < 3:
-    # py2
+PY2 = sys.version_info.major == 2
+
+if PY2:
     from urllib import urlencode
     from urlparse import urljoin
     import urllib2 as urllib_request
     from urllib2 import urlopen
 else:
-    # py3
     from urllib.parse import urlencode
     from urllib.parse import urljoin
     import urllib.request as urllib_request
@@ -24,8 +24,8 @@ def get_authorization_headers(username, password):
     Basic authentication, see this recipe:
     http://www.voidspace.org.uk/python/articles/authentication.shtml
     """
-
-    base64string = base64.b64encode('%s:%s' % (username, password))
+    creds = '%s:%s' % (username, password)
+    base64string = base64.b64encode(creds.encode())  # PY3 expects bytes
     return {"Authorization": "Basic %s" % base64string}
 
 
