@@ -17,6 +17,7 @@ else:
     from urllib.parse import urljoin
     import urllib.request as urllib_request
     from urllib.request import urlopen
+    raw_input = input
 
 
 API_HOST_STAGING = "https://staging.3di.lizard.net/"
