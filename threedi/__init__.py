@@ -1,24 +1,15 @@
 from functools import wraps
 import getpass
 import json
-import sys
 
 from . import requests
+from .compat import (
+    urljoin,
+    PY2,
+)
 
-PY2 = sys.version_info.major == 2
-
-if PY2:
-    from urllib import urlencode
-    from urlparse import urljoin
-    import urllib2 as urllib_request
-    from urllib2 import urlopen
-else:
-    from urllib.parse import urlencode
-    from urllib.parse import urljoin
-    import urllib.request as urllib_request
-    from urllib.request import urlopen
+if not PY2:
     raw_input = input
-
 
 API_HOST_STAGING = "https://staging.3di.lizard.net/"
 API_HOST_PRODUCTION = "https://3di.lizard.net/"
@@ -96,6 +87,18 @@ class API(object):
         """POST request."""
         url = self._build_url()
         return requests.post(url, data=data, headers=headers, auth=auth)
+
+    @authenticate_interactively
+    def options(self, params=None, headers={}, auth=None):
+        """OPTIONS request."""
+        url = self._build_url()
+        return requests.options(url, params=params, headers=headers, auth=auth)
+
+    @authenticate_interactively
+    def head(self, params=None, headers={}, auth=None):
+        """HEAD request."""
+        url = self._build_url()
+        return requests.head(url, params=params, headers=headers, auth=auth)
 
     # Reflection
     def __getattr__(self, name):

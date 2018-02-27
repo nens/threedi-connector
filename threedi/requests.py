@@ -3,20 +3,12 @@ Most of this is copied from: https://github.com/lizardsystem/lizard-connector
 """
 import base64
 import json
-import sys
 
-PY2 = sys.version_info.major == 2
-
-if PY2:
-    from urllib import urlencode
-    from urlparse import urljoin
-    import urllib2 as urllib_request
-    from urllib2 import urlopen
-else:
-    from urllib.parse import urlencode
-    from urllib.parse import urljoin
-    import urllib.request as urllib_request
-    from urllib.request import urlopen
+from .compat import (
+    urlencode,
+    urllib_request,
+    urlopen,
+)
 
 
 def get_authorization_headers(username, password):
@@ -25,11 +17,13 @@ def get_authorization_headers(username, password):
     http://www.voidspace.org.uk/python/articles/authentication.shtml
     """
     creds = '%s:%s' % (username, password)
-    base64string = base64.b64encode(creds.encode())  # PY3 expects bytes
+    # PY3 expects bytes, thus we need to do ``encode()``
+    bytes_like = creds.encode()
+    base64string = base64.b64encode(bytes_like)
     return {"Authorization": "Basic %s" % base64string}
 
 
-def perform_request(url, data=None, headers={}, auth=None):
+def perform_request(url, data=None, headers={}, auth=None, method=None):
     """
     GETs parameters from the Lizard api or POSTs data to the Lizard api.
     Defaults to GET request. Turns into a POST request if data is provided.
@@ -41,7 +35,7 @@ def perform_request(url, data=None, headers={}, auth=None):
         auth (tuple): A tuple containing (username, password) for basic
             authentication.
     Returns:
-        a dictionary with the response.
+        HTTP response
     """
     if auth:
         username, password = auth
@@ -57,10 +51,14 @@ def perform_request(url, data=None, headers={}, auth=None):
         )
     else:
         request_obj = urllib_request.Request(url, headers=headers)
+
+    if method is not None:
+        assert method in ['HEAD', 'DELETE', 'OPTIONS', 'GET', 'POST'], \
+            "Unknown method: %s" % method
+        request_obj.get_method = lambda: method
+
     resp = urlopen(request_obj)
-    content = resp.read().decode('UTF-8')
-    return content
-    # return json.loads(content)
+    return resp
 
 
 def post(url, data=None, headers={}, auth=None):
@@ -72,10 +70,33 @@ def post(url, data=None, headers={}, auth=None):
                     data to.
         data (dict): Dictionary with the data to post to the api
     """
-    return perform_request(url, data=data, headers=headers, auth=auth)
+    resp = perform_request(url, data=data, headers=headers, auth=auth)
+    content = resp.read().decode('UTF-8')
+    return content
 
 
 def get(url, params=None, headers={}, auth=None):
     if params:
         url = url + '?' + urlencode(params)
-    return perform_request(url, headers=headers, auth=auth)
+    resp = perform_request(url, headers=headers, auth=auth)
+    content = resp.read().decode('UTF-8')
+    return content
+
+
+def options(url, params=None, headers={}, auth=None):
+    if params:
+        url = url + '?' + urlencode(params)
+    resp = perform_request(url, headers=headers, auth=auth, method='OPTIONS')
+    content = resp.read().decode('UTF-8')
+    return content
+
+
+def head(url, params=None, headers={}, auth=None):
+    # TODO: head should not return body, but the headers, we should wrap
+    # things in an object or something
+    if params:
+        url = url + '?' + urlencode(params)
+    resp = perform_request(url, headers=headers, auth=auth, method='HEAD')
+    return resp
+    # content = resp.read().decode('UTF-8')
+    # return content
