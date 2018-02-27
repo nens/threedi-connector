@@ -34,6 +34,7 @@ def perform_request(url, data=None, headers={}, auth=None, method=None):
         data (dict): data in a list or dictionary format.
         auth (tuple): A tuple containing (username, password) for basic
             authentication.
+        method (str): HTTP method
     Returns:
         HTTP response
     """
