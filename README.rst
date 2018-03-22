@@ -56,4 +56,4 @@ A **very simple** API, with clear public and private classes/methods/functions. 
 
 As **few** dependencies as possible for maximum portability (ideally: **0**, i.e., the current situation).
 
-Designed for Jupyter notebook use (therefore i.e. interactive authentication).
+Designed for both Jupyter notebook use (therefore i.e. interactive authentication), and use as a library.
