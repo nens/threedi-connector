@@ -77,25 +77,25 @@ class API(object):
         return self._cache
 
     @authenticate_interactively
-    def get(self, params=None, headers={}, auth=None):
+    def get(self, params=None, headers=None, auth=None):
         """GET request."""
         url = self._build_url()
         return requests.get(url, params=params, headers=headers, auth=auth)
 
     @authenticate_interactively
-    def post(self, data=None, headers={}, auth=None):
+    def post(self, data=None, headers=None, auth=None):
         """POST request."""
         url = self._build_url()
         return requests.post(url, data=data, headers=headers, auth=auth)
 
     @authenticate_interactively
-    def options(self, params=None, headers={}, auth=None):
+    def options(self, params=None, headers=None, auth=None):
         """OPTIONS request."""
         url = self._build_url()
         return requests.options(url, params=params, headers=headers, auth=auth)
 
     @authenticate_interactively
-    def head(self, params=None, headers={}, auth=None):
+    def head(self, params=None, headers=None, auth=None):
         """HEAD request."""
         url = self._build_url()
         return requests.head(url, params=params, headers=headers, auth=auth)

@@ -23,7 +23,7 @@ def get_authorization_headers(username, password):
     return {"Authorization": "Basic %s" % base64string}
 
 
-def perform_request(url, data=None, headers={}, auth=None, method=None):
+def perform_request(url, data=None, headers=None, auth=None, method=None):
     """
     GETs parameters from the Lizard api or POSTs data to the Lizard api.
     Defaults to GET request. Turns into a POST request if data is provided.
@@ -38,6 +38,9 @@ def perform_request(url, data=None, headers={}, auth=None, method=None):
     Returns:
         HTTP response
     """
+    if headers is None:
+        headers = {}
+
     if auth:
         username, password = auth
         auth_header = get_authorization_headers(username, password)
@@ -62,7 +65,7 @@ def perform_request(url, data=None, headers={}, auth=None, method=None):
     return resp
 
 
-def post(url, data=None, headers={}, auth=None):
+def post(url, data=None, headers=None, auth=None):
     """
     POST data to the api.
     Args:
@@ -76,7 +79,7 @@ def post(url, data=None, headers={}, auth=None):
     return content
 
 
-def get(url, params=None, headers={}, auth=None):
+def get(url, params=None, headers=None, auth=None):
     if params:
         url = url + '?' + urlencode(params)
     resp = perform_request(url, headers=headers, auth=auth)
@@ -84,7 +87,7 @@ def get(url, params=None, headers={}, auth=None):
     return content
 
 
-def options(url, params=None, headers={}, auth=None):
+def options(url, params=None, headers=None, auth=None):
     if params:
         url = url + '?' + urlencode(params)
     resp = perform_request(url, headers=headers, auth=auth, method='OPTIONS')
@@ -92,7 +95,7 @@ def options(url, params=None, headers={}, auth=None):
     return content
 
 
-def head(url, params=None, headers={}, auth=None):
+def head(url, params=None, headers=None, auth=None):
     # TODO: head should not return body, but the headers, we should wrap
     # things in an object or something
     if params:
