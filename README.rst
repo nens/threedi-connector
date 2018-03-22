@@ -46,3 +46,12 @@ Tests are run with ``pytest``:
 .. code-block:: bash
 
     $ python setup.py test
+
+Design philosophy
+-----------------
+
+Be good at doing one (or maybe two or three) thing(s).
+
+A **very simple** API, with clear public and private classes/methods/functions. A simple API means also less need for thorough documentation.
+
+As **few** dependencies as possible for maximum portability (ideally: **0**, i.e., the current situation).
