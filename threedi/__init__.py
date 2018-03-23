@@ -14,6 +14,8 @@ if not PY2:
 API_HOST_STAGING = "https://staging.3di.lizard.net/"
 API_HOST_PRODUCTION = "https://3di.lizard.net/"
 
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+
 
 def get_credentials_interactively():
     username = raw_input("Username: ")
@@ -42,6 +44,14 @@ def authenticate_interactively(func):
             if not auth:
                 kwargs['auth'] = get_credentials_interactively()
         return func(*args, **kwargs)
+    return func_wrapper
+
+
+def add_creds_from_self(func):
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        pass
+        # TODO
     return func_wrapper
 
 
@@ -100,6 +110,18 @@ class API(object):
         url = self._build_url()
         return requests.head(url, params=params, headers=headers, auth=auth)
 
+    def set_credentials(self, username=None, password=None, interactive=True):
+        """Set credentials to the API object so we don't have to ask anymore.
+        """
+        if interactive:
+            username, password = get_credentials_interactively()
+
+        # mangle them names for extra obfuscation
+        self.__username = username
+        self.__password = password
+        raise NotImplementedError(
+            "todo: make @authenticate_interactively aware of credentials")
+
     # Reflection
     def __getattr__(self, name):
         return self._(name)
@@ -128,20 +150,44 @@ class Simulation(object):
             # save_states=None,
             # use_saved_state=None,
             # store_results=None,
+            host=API_HOST_STAGING,
             **sim_kwargs):
         self.sim_kwargs = sim_kwargs
-        self._api = API()
+        self.host = host
+        self._api = API(host=host)
         self._calc_endpoint = self._api.calculation.start
-        self._tasks = self._api.startmachinetasks
         self.info = None
 
     def start(self):
+        """Start the simulation."""
         info = self._calc_endpoint.post(data=self.sim_kwargs)
         self.info = json.loads(info)
         return self.info
 
-    def tasks_in_queue(self):
-        data = self._tasks.get()
+    @classmethod
+    def from_subgrid_id(cls, subgrid_id):
+        raise NotImplementedError("boe")
+
+
+class SimulationManager(object):
+    """
+    Manage saved states, queued simulations, etc.
+    """
+    def __init__(self, host=API_HOST_STAGING):
+        self.host = host
+        self._api = API(host=host)
+        self._tasks_endpoint = self._api.startmachinetasks
+        self._saved_states_endpoint = self._api.threedimodelsavedstates
+
+    @property
+    def queued_tasks(self):
+        """Show tasks in the queue."""
+        data = self._tasks_endpoint.get()
+        return json.loads(data)
+
+    @property
+    def saved_states(self):
+        data = self._saved_states_endpoint.get()
         return json.loads(data)
 
 

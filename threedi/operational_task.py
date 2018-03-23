@@ -3,6 +3,10 @@ Dit script doet twee dingen:
     starten van een taak
     verwijderen oude saved state
 
+N.b:
+    dezelfde result_uuid wordt elke keer gebruikt omdat we geen nieuwe
+    resultaten in Lizard willen aanmaken, maar de bestaande willen updaten
+
 Issue: result_uuid
 """
 from datetime import datetime
