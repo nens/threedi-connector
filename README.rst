@@ -54,6 +54,6 @@ Be good at doing **one** (or maybe two or three) thing(s).
 
 A **very simple** API, with clear public and private classes/methods/functions. A simple API means also less need for thorough documentation.
 
-As **few** dependencies as possible for maximum portability (ideally: **0**, i.e., the current situation).
+As **few** dependencies as possible for maximum portability (ideally: **0**; the current situation).
 
 Designed for both Jupyter notebook use (therefore i.e. interactive authentication), and use as a library.
