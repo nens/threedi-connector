@@ -11,7 +11,7 @@ if PY2:
     import urllib2 as urllib_request  # noqa
     from urllib2 import urlopen  # noqa
     basestring = basestring
-else:
+else:  # it's py3 (or higher)
     from urllib.parse import urlencode  # noqa
     from urllib.parse import urljoin  # noqa
     import urllib.request as urllib_request  # noqa

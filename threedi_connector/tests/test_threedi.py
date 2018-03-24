@@ -1,4 +1,4 @@
-from threedi import (
+from threedi_connector import (
     API,
 )
 
