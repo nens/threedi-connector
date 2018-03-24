@@ -17,8 +17,8 @@ Start a simulation:
 
 .. code-block:: python
 
-    >>> import threedi
-    >>> simulation = threedi.start_simulation(
+    >>> import threedi_connector
+    >>> simulation = threedi_connector.start_simulation(
     ...    model_slug='v2_bergermeer-v2_bergermeer_bres_maalstop-55-784c561ecebf9433cd7beb8b6a22a14f2841cda4',
     ...    organisation_uuid='61f5a464c35044c19bc7d4b42d7f58cb',
     ...    scenario_name='test-lib (this result can be deleted)',

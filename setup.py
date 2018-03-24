@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 version = '0.1'
 
 setup(
-    name='threedi',
+    name='threedi-connector',
     version=version,
     packages=find_packages(),
     description='A 3Di client library',
