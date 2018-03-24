@@ -7,7 +7,6 @@ import json
 from . import requests
 from .compat import (
     urljoin,
-    PY2,
     basestring,
     raw_input,
 )
