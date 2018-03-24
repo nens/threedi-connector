@@ -9,3 +9,4 @@ def test_compat_availability():
     compat.urllib_request
     compat.urlopen
     compat.basestring
+    compat.raw_input
