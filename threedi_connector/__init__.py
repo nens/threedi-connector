@@ -9,10 +9,8 @@ from .compat import (
     urljoin,
     PY2,
     basestring,
+    raw_input,
 )
-
-if not PY2:
-    raw_input = input
 
 API_HOST_STAGING = "https://staging.3di.lizard.net/"
 API_HOST_PRODUCTION = "https://3di.lizard.net/"
