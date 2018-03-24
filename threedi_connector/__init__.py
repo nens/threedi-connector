@@ -1,4 +1,5 @@
 from collections import namedtuple
+import datetime
 from functools import wraps
 import getpass
 import json
@@ -7,6 +8,7 @@ from . import requests
 from .compat import (
     urljoin,
     PY2,
+    basestring,
 )
 
 if not PY2:
@@ -16,6 +18,17 @@ API_HOST_STAGING = "https://staging.3di.lizard.net/"
 API_HOST_PRODUCTION = "https://3di.lizard.net/"
 
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+DATETIME_FORMAT_WITH_Z = "%Y-%m-%dT%H:%M:%S.%fZ"
+DATETIME_FORMAT_NO_MS = "%Y-%m-%dT%H:%M:%SZ"
+
+# all the formats I can think of atm
+DATETIME_FORMATS = [
+    DATETIME_FORMAT,
+    DATETIME_FORMAT_WITH_Z,
+
+    # this one is in ``data_json``, which is hard to parse for now
+    # DATETIME_FORMAT_NO_MS,
+]
 
 Credentials = namedtuple('Credentials', ['username', 'password'])
 
@@ -64,6 +77,25 @@ def add_auth_creds_from_self(func):
         else:
             return func(*args, **kwargs)
     return func_wrapper
+
+
+def deserialize_datetime(pairs, dt_formats=None):
+    """Hook for json.load/json.loads to deserialize datetimes."""
+    if dt_formats is None:
+        dt_formats = DATETIME_FORMATS
+
+    d = {}
+    for k, v in pairs:
+        if isinstance(v, basestring):
+            # try to parse a possible datetime string
+            for dt_format in dt_formats:
+                try:
+                    v = datetime.datetime.strptime(v, dt_format)
+                    break
+                except ValueError:
+                    pass
+        d[k] = v
+    return d
 
 
 # Inspiration by: https://sendgrid.com/blog/using-python-to-implement-a-fluent-interface-to-any-rest-api/  # noqa
@@ -204,12 +236,12 @@ class SimulationManager(object):
     def queued_tasks(self):
         """Show tasks in the queue."""
         data = self._api.startmachinetasks.get()
-        return json.loads(data)
+        return json.loads(data, object_pairs_hook=deserialize_datetime)
 
     @property
     def saved_states(self):
         data = self._api.threedimodelsavedstates.get()
-        return json.loads(data)
+        return json.loads(data, object_pairs_hook=deserialize_datetime)
 
 
 def start_simulation(*args, **kwargs):
