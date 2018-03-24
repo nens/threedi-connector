@@ -1,3 +1,4 @@
+from collections import namedtuple
 from functools import wraps
 import getpass
 import json
@@ -15,6 +16,8 @@ API_HOST_STAGING = "https://staging.3di.lizard.net/"
 API_HOST_PRODUCTION = "https://3di.lizard.net/"
 
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+
+Credentials = namedtuple('Credentials', ['username', 'password'])
 
 
 def get_credentials_interactively():
@@ -47,11 +50,19 @@ def authenticate_interactively(func):
     return func_wrapper
 
 
-def add_creds_from_self(func):
+def add_auth_creds_from_self(func):
+    """If the API object has been authenticated using the ``API.authenticate``
+    method, this decorator will pass on those credentials as keyword
+    arguments (i.e.: ``func(auth=creds)``)
+    """
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        pass
-        # TODO
+        instance = args[0]  # i.e.: self
+        creds = instance._API__creds  # name mangling hackery
+        if creds is not None:
+            return func(auth=creds, *args, **kwargs)
+        else:
+            return func(*args, **kwargs)
     return func_wrapper
 
 
@@ -70,11 +81,17 @@ class API(object):
         self.host = host
         self.base_url = self.host + 'api/{}/'.format(version)
         self._cache = cache or []
+        self.__creds = None  # set by ``API.authenticate``
 
     # Build the cache, and handle special cases
     def _(self, name):
         # Enables method chaining
-        return API(cache=self._cache+[name], host=self.host)
+        new_api_obj = API(cache=self._cache+[name], host=self.host)
+        # we need to pass on all information (like creds) to the new objects,
+        # because they don't know anything about the 'parent' object, which is
+        # kinda convoluted. TODO: maybe think of a better solution?
+        new_api_obj._API__creds = self.__creds  # name mangling again...
+        return new_api_obj
 
     def _build_url(self, append_slash=True):
         url = urljoin(self.base_url, "/".join(self._cache))
@@ -86,41 +103,41 @@ class API(object):
     def method(self):
         return self._cache
 
+    @add_auth_creds_from_self
     @authenticate_interactively
     def get(self, params=None, headers=None, auth=None):
         """GET request."""
         url = self._build_url()
         return requests.get(url, params=params, headers=headers, auth=auth)
 
+    @add_auth_creds_from_self
     @authenticate_interactively
     def post(self, data=None, headers=None, auth=None):
         """POST request."""
         url = self._build_url()
         return requests.post(url, data=data, headers=headers, auth=auth)
 
+    @add_auth_creds_from_self
     @authenticate_interactively
     def options(self, params=None, headers=None, auth=None):
         """OPTIONS request."""
         url = self._build_url()
         return requests.options(url, params=params, headers=headers, auth=auth)
 
+    @add_auth_creds_from_self
     @authenticate_interactively
     def head(self, params=None, headers=None, auth=None):
         """HEAD request."""
         url = self._build_url()
         return requests.head(url, params=params, headers=headers, auth=auth)
 
-    def set_credentials(self, username=None, password=None, interactive=True):
+    def authenticate(self, username=None, password=None):
         """Set credentials to the API object so we don't have to ask anymore.
         """
-        if interactive:
+        if username is None or password is None:
             username, password = get_credentials_interactively()
-
-        # mangle them names for extra obfuscation
-        self.__username = username
-        self.__password = password
-        raise NotImplementedError(
-            "todo: make @authenticate_interactively aware of credentials")
+        # name mangled for extra obfuscation, cuz why tf not
+        self.__creds = Credentials(username, password)
 
     # Reflection
     def __getattr__(self, name):
@@ -176,18 +193,20 @@ class SimulationManager(object):
     def __init__(self, host=API_HOST_STAGING):
         self.host = host
         self._api = API(host=host)
-        self._tasks_endpoint = self._api.startmachinetasks
-        self._saved_states_endpoint = self._api.threedimodelsavedstates
+
+    def authenticate(self, *args, **kwargs):
+        """Just calls the API authentication."""
+        self._api.authenticate(*args, **kwargs)
 
     @property
     def queued_tasks(self):
         """Show tasks in the queue."""
-        data = self._tasks_endpoint.get()
+        data = self._api.startmachinetasks.get()
         return json.loads(data)
 
     @property
     def saved_states(self):
-        data = self._saved_states_endpoint.get()
+        data = self._api.threedimodelsavedstates.get()
         return json.loads(data)
 
 
