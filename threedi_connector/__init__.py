@@ -23,7 +23,7 @@ Credentials = namedtuple('Credentials', ['username', 'password'])
 def get_credentials_interactively():
     username = raw_input("Username: ")
     password = getpass.getpass("Password: ")
-    return username, password
+    return Credentials(username, password)
 
 
 def authenticate_interactively(func):
@@ -135,9 +135,11 @@ class API(object):
         """Set credentials to the API object so we don't have to ask anymore.
         """
         if username is None or password is None:
-            username, password = get_credentials_interactively()
+            creds = get_credentials_interactively()
+        else:
+            creds = Credentials(username, password)
         # name mangled for extra obfuscation, cuz why tf not
-        self.__creds = Credentials(username, password)
+        self.__creds = creds
 
     # Reflection
     def __getattr__(self, name):
