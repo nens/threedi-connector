@@ -4,11 +4,7 @@ Most of this is copied from: https://github.com/lizardsystem/lizard-connector
 import base64
 import json
 
-from .compat import (
-    urlencode,
-    urllib_request,
-    urlopen,
-)
+from .compat import urlencode, urllib_request, urlopen
 
 
 def get_authorization_headers(username, password):

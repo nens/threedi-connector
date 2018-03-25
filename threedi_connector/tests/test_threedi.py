@@ -1,6 +1,4 @@
-from threedi_connector import (
-    API,
-)
+from threedi_connector import API
 
 api = API()
 

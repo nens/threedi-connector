@@ -2,18 +2,9 @@ import datetime
 import json
 
 from . import requests
-from .compat import (
-    urljoin,
-    basestring,
-)
-from .decorators import (
-    authenticate_interactively,
-    add_auth_creds_from_self,
-)
-from .helpers import (
-    Credentials,
-    get_credentials_interactively,
-)
+from .compat import urljoin, basestring
+from .decorators import authenticate_interactively, add_auth_creds_from_self
+from .helpers import Credentials, get_credentials_interactively
 
 API_HOST_STAGING = "https://staging.3di.lizard.net/"
 API_HOST_PRODUCTION = "https://3di.lizard.net/"
