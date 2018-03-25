@@ -39,8 +39,14 @@ def get_credentials_interactively():
 def authenticate_interactively(func):
     """
     Require authentication as default, and ask via stdin for username/pw
-    if it isn't supplied. Authentication can still be disabled by passing
-    ``use_auth=False``.
+    if it isn't supplied.
+
+    Notes:
+
+    Authentication can still be disabled by passing ``use_auth=False``.
+
+    To authenticate non-interactively, use the ``auth`` argument, i.e.:
+    ``func(auth=Credentials(username='foo', password='bar'))``
     """
     @wraps(func)
     def func_wrapper(*args, **kwargs):
@@ -60,19 +66,26 @@ def authenticate_interactively(func):
     return func_wrapper
 
 
-def add_auth_creds_from_self(func):
+def add_auth_creds_from_self(func_requiring_creds):
     """If the API object has been authenticated using the ``API.authenticate``
     method, this decorator will pass on those credentials as keyword
-    arguments (i.e.: ``func(auth=creds)``)
+    arguments (i.e.: ``func_requiring_creds(auth=creds)``).
+
+    Requirements:
+
+    - The wrappee ``func_requiring_creds`` needs to be a function that accepts
+    ``auth=creds`` as keyword arguments.
+
+    - ``func_requiring_creds`` should be an instance method of ``API``.
     """
-    @wraps(func)
+    @wraps(func_requiring_creds)
     def func_wrapper(*args, **kwargs):
         instance = args[0]  # i.e.: self
         creds = instance._API__creds  # name mangling hackery
         if creds is not None:
-            return func(auth=creds, *args, **kwargs)
+            return func_requiring_creds(auth=creds, *args, **kwargs)
         else:
-            return func(*args, **kwargs)
+            return func_requiring_creds(*args, **kwargs)
     return func_wrapper
 
 
