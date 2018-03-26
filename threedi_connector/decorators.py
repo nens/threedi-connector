@@ -35,22 +35,29 @@ def authenticate_interactively(func):
 
 
 def add_auth_creds_from_self(func_requiring_creds):
-    """If the API object has been authenticated using the ``API.authenticate``
-    method, this decorator will pass on those credentials as keyword
-    arguments (i.e.: ``func_requiring_creds(auth=creds)``).
+    """If the API object has been authenticated using the
+    ``AddCredsMixin.authenticate`` method, this decorator will pass on those
+    credentials as keyword arguments to ``func_requiring_creds`` using the
+    ``auth`` keyword.
 
     Requirements:
 
     - The wrappee ``func_requiring_creds`` needs to be a function that accepts
     ``auth=creds`` as keyword arguments.
 
-    - ``func_requiring_creds`` should be an instance method of ``API``.
+    - ``func_requiring_creds`` should be an instance method of an object
+    subclassed using ``AddCredsMixin``, since we need to inspect variables
+    set by that mixin.
     """
     @wraps(func_requiring_creds)
     def func_wrapper(*args, **kwargs):
         instance = args[0]  # i.e.: self
-        creds = instance._API__creds  # name mangling hackery
+        class_name = 'AddCredsMixin'
+        # name mangling hackery
+        name_mangled_name = '_%s__creds' % class_name
+        creds = getattr(instance, name_mangled_name)
         if creds is not None:
+            assert isinstance(creds, tuple), 'sanity check'
             return func_requiring_creds(auth=creds, *args, **kwargs)
         else:
             return func_requiring_creds(*args, **kwargs)
