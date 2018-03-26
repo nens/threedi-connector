@@ -111,7 +111,7 @@ class BaseAPI(object):
     # Build the cache, and handle special cases
     def _(self, name):
         # Enables method chaining
-        new_api_obj = API(cache=self._cache+[name], host=self.host)
+        new_api_obj = self.__class__(cache=self._cache+[name], host=self.host)
         return new_api_obj
 
     def _build_url(self, append_slash=True):
