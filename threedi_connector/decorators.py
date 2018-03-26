@@ -1,7 +1,10 @@
 """Useful decorators."""
 from functools import wraps
+import logging
 
 from .helpers import get_credentials_interactively
+
+logger = logging.getLogger(__name__)
 
 
 def authenticate_interactively(func):
@@ -58,7 +61,16 @@ def add_auth_creds_from_self(creds_attribute_name='_AddCredsMixin__creds'):
             creds = getattr(instance, creds_attribute_name)
             if creds is not None:
                 assert isinstance(creds, tuple), 'sanity check'
-                return func_requiring_creds(auth=creds, *args, **kwargs)
+                if 'auth' in kwargs:
+                    logger.warning(
+                        "You have already been authenticated using "
+                        "``authenticate()``, however, credentials passed "
+                        "via kwargs will take precedence over credentials "
+                        "set via ``authenticate()``."
+                    )
+                    return func_requiring_creds(*args, **kwargs)
+                else:
+                    return func_requiring_creds(auth=creds, *args, **kwargs)
             else:
                 return func_requiring_creds(*args, **kwargs)
         return func_wrapper
