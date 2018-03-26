@@ -6,8 +6,8 @@ from .compat import urljoin, basestring
 from .decorators import authenticate_interactively, add_auth_creds_from_self
 from .helpers import Credentials, get_credentials_interactively
 
-API_HOST_STAGING = "https://staging.3di.lizard.net/"
-API_HOST_PRODUCTION = "https://3di.lizard.net/"
+HOST_STAGING = "https://staging.3di.lizard.net/"
+HOST_PRODUCTION = "https://3di.lizard.net/"
 
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 DATETIME_FORMAT_WITH_Z = "%Y-%m-%dT%H:%M:%S.%fZ"
@@ -47,7 +47,7 @@ class API(object):
     """
     3Di API interface
     """
-    def __init__(self, cache=None, host=API_HOST_STAGING, version='v1'):
+    def __init__(self, cache=None, host=HOST_STAGING, version='v1'):
         # schema_url = urljoin(host, "api/v1/docs/")
         # endpoint_data = requests.get(
         #     schema_url, headers={'Accept': 'application/coreapi+json'}
@@ -145,7 +145,7 @@ class Simulation(object):
             # save_states=None,
             # use_saved_state=None,
             # store_results=None,
-            host=API_HOST_STAGING,
+            host=HOST_STAGING,
             **sim_kwargs):
         self.sim_kwargs = sim_kwargs
         self.host = host
@@ -171,7 +171,7 @@ class SimulationManager(object):
     """
     Manage saved states, queued simulations, etc.
     """
-    def __init__(self, host=API_HOST_STAGING):
+    def __init__(self, host=HOST_STAGING):
         self.host = host
         self._api = API(host=host)
 
