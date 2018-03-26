@@ -171,6 +171,12 @@ class API(AddCredsMixin, BaseAPI):
     def head(self, *args, **kwargs):
         return super(API, self).head(*args, **kwargs)
 
+    # I want my docstrings back
+    get.__doc__ = BaseAPI.get.__doc__
+    post.__doc__ = BaseAPI.post.__doc__
+    options.__doc__ = BaseAPI.options.__doc__
+    head.__doc__ = BaseAPI.head.__doc__
+
 
 class InteractiveAPI(InteractiveAddCredsMixin, BaseAPI):
     """API with interactive prompts (i.e., for username/password)."""
@@ -193,6 +199,12 @@ class InteractiveAPI(InteractiveAddCredsMixin, BaseAPI):
     @authenticate_interactively
     def head(self, *args, **kwargs):
         return super(InteractiveAPI, self).head(*args, **kwargs)
+
+    # I want my docstrings back
+    get.__doc__ = BaseAPI.get.__doc__
+    post.__doc__ = BaseAPI.post.__doc__
+    options.__doc__ = BaseAPI.options.__doc__
+    head.__doc__ = BaseAPI.head.__doc__
 
 
 class Simulation(object):
