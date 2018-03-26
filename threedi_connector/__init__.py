@@ -150,12 +150,15 @@ class Simulation(object):
         self.sim_kwargs = sim_kwargs
         self.host = host
         self._api = API(host=host)
-        self._calc_endpoint = self._api.calculation.start
         self.info = None
+
+    def authenticate(self, *args, **kwargs):
+        """Just calls the API authentication."""
+        self._api.authenticate(*args, **kwargs)
 
     def start(self):
         """Start the simulation."""
-        info = self._calc_endpoint.post(data=self.sim_kwargs)
+        info = self._api.calculation.start.post(data=self.sim_kwargs)
         self.info = json.loads(info)
         return self.info
 
