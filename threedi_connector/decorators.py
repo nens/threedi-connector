@@ -34,31 +34,35 @@ def authenticate_interactively(func):
     return func_wrapper
 
 
-def add_auth_creds_from_self(func_requiring_creds):
-    """If the API object has been authenticated using the
-    ``AddCredsMixin.authenticate`` method, this decorator will pass on those
-    credentials as keyword arguments to ``func_requiring_creds`` using the
-    ``auth`` keyword.
+def add_auth_creds_from_self(add_creds_mixin_name='AddCredsMixin'):
+    """A decorator to parameterize the real decorator
+    ``_add_auth_creds_from_self`` to make it more flexible."""
+    def _add_auth_creds_from_self(func_requiring_creds):
+        """If the API object has been authenticated using the
+        ``AddCredsMixin.authenticate`` method, this decorator will pass on
+        those credentials as keyword arguments to ``func_requiring_creds``
+        using the ``auth`` keyword.
 
-    Requirements:
+        Requirements:
 
-    - The wrappee ``func_requiring_creds`` needs to be a function that accepts
-    ``auth=creds`` as keyword arguments.
+        - The wrappee ``func_requiring_creds`` needs to be a function that
+        accepts ``auth=creds`` as keyword arguments.
 
-    - ``func_requiring_creds`` should be an instance method of an object
-    subclassed using ``AddCredsMixin``, since we need to inspect variables
-    set by that mixin.
-    """
-    @wraps(func_requiring_creds)
-    def func_wrapper(*args, **kwargs):
-        instance = args[0]  # i.e.: self
-        class_name = 'AddCredsMixin'
-        # name mangling hackery
-        name_mangled_name = '_%s__creds' % class_name
-        creds = getattr(instance, name_mangled_name)
-        if creds is not None:
-            assert isinstance(creds, tuple), 'sanity check'
-            return func_requiring_creds(auth=creds, *args, **kwargs)
-        else:
-            return func_requiring_creds(*args, **kwargs)
-    return func_wrapper
+        - ``func_requiring_creds`` should be an instance method of an object
+        subclassed using ``AddCredsMixin``, since we need to inspect variables
+        set by that mixin.
+        """
+        @wraps(func_requiring_creds)
+        def func_wrapper(*args, **kwargs):
+            instance = args[0]  # i.e.: self
+            class_name = add_creds_mixin_name
+            # name mangling hackery
+            name_mangled_name = '_%s__creds' % class_name
+            creds = getattr(instance, name_mangled_name)
+            if creds is not None:
+                assert isinstance(creds, tuple), 'sanity check'
+                return func_requiring_creds(auth=creds, *args, **kwargs)
+            else:
+                return func_requiring_creds(*args, **kwargs)
+        return func_wrapper
+    return _add_auth_creds_from_self

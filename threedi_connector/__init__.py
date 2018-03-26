@@ -56,11 +56,34 @@ class AddCredsMixin(object):
         new_api_obj._AddCredsMixin__creds = self.__creds
         return new_api_obj
 
-    def authenticate(self, username=None, password=None, interactive=False):
+    def authenticate(self, username=None, password=None):
         """Set credentials (optionally interactively) to the API object so
         that we don't have to ask anymore.
         """
-        if interactive and (username is None or password is None):
+        creds = Credentials(username, password)
+        # name mangled for extra obfuscation, cuz why tf not
+        self.__creds = creds
+
+
+class InteractiveAddCredsMixin(object):
+    def __init__(self, *args, **kwargs):
+        super(InteractiveAddCredsMixin, self).__init__(*args, **kwargs)
+        self.__creds = None  # set by ``AddCredsMixin.authenticate``
+
+    def _(self, name):
+        # Enables method chaining
+        new_api_obj = self.__class__(cache=self._cache+[name], host=self.host)
+        # we need to pass on all information (like creds) to the new objects,
+        # because they don't know anything about the 'parent' object, which is
+        # kinda convoluted. TODO: maybe think of a better solution?
+        new_api_obj._InteractiveAddCredsMixin__creds = self.__creds
+        return new_api_obj
+
+    def authenticate(self, username=None, password=None):
+        """Set credentials (optionally interactively) to the API object so
+        that we don't have to ask anymore.
+        """
+        if username is None or password is None:
             creds = get_credentials_interactively()
         else:
             creds = Credentials(username, password)
@@ -132,52 +155,44 @@ class BaseAPI(object):
 
 class API(AddCredsMixin, BaseAPI):
     """Non-interactive API, with ``authenticate`` method for convenience."""
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self()
     def get(self, *args, **kwargs):
         return super(API, self).get(*args, **kwargs)
 
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self()
     def post(self, *args, **kwargs):
         return super(API, self).post(*args, **kwargs)
 
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self()
     def options(self, *args, **kwargs):
         return super(API, self).options(*args, **kwargs)
 
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self()
     def head(self, *args, **kwargs):
         return super(API, self).head(*args, **kwargs)
 
-    def authenticate(self, username=None, password=None):
-        super(API, self).authenticate(
-            username=username, password=password, interactive=False)
 
-
-class InteractiveAPI(AddCredsMixin, BaseAPI):
+class InteractiveAPI(InteractiveAddCredsMixin, BaseAPI):
     """API with interactive prompts (i.e., for username/password)."""
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self('InteractiveAddCredsMixin')
     @authenticate_interactively
     def get(self, *args, **kwargs):
         return super(InteractiveAPI, self).get(*args, **kwargs)
 
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self('InteractiveAddCredsMixin')
     @authenticate_interactively
     def post(self, *args, **kwargs):
         return super(InteractiveAPI, self).post(*args, **kwargs)
 
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self('InteractiveAddCredsMixin')
     @authenticate_interactively
     def options(self, *args, **kwargs):
         return super(InteractiveAPI, self).options(*args, **kwargs)
 
-    @add_auth_creds_from_self
+    @add_auth_creds_from_self('InteractiveAddCredsMixin')
     @authenticate_interactively
     def head(self, *args, **kwargs):
         return super(InteractiveAPI, self).head(*args, **kwargs)
-
-    def authenticate(self, username=None, password=None):
-        super(InteractiveAPI, self).authenticate(
-            username=username, password=password, interactive=True)
 
 
 class Simulation(object):
