@@ -180,22 +180,22 @@ class API(AddCredsMixin, BaseAPI):
 
 class InteractiveAPI(InteractiveAddCredsMixin, BaseAPI):
     """API with interactive prompts (i.e., for username/password)."""
-    @add_auth_creds_from_self('InteractiveAddCredsMixin')
+    @add_auth_creds_from_self('_InteractiveAddCredsMixin__creds')
     @authenticate_interactively
     def get(self, *args, **kwargs):
         return super(InteractiveAPI, self).get(*args, **kwargs)
 
-    @add_auth_creds_from_self('InteractiveAddCredsMixin')
+    @add_auth_creds_from_self('_InteractiveAddCredsMixin__creds')
     @authenticate_interactively
     def post(self, *args, **kwargs):
         return super(InteractiveAPI, self).post(*args, **kwargs)
 
-    @add_auth_creds_from_self('InteractiveAddCredsMixin')
+    @add_auth_creds_from_self('_InteractiveAddCredsMixin__creds')
     @authenticate_interactively
     def options(self, *args, **kwargs):
         return super(InteractiveAPI, self).options(*args, **kwargs)
 
-    @add_auth_creds_from_self('InteractiveAddCredsMixin')
+    @add_auth_creds_from_self('_InteractiveAddCredsMixin__creds')
     @authenticate_interactively
     def head(self, *args, **kwargs):
         return super(InteractiveAPI, self).head(*args, **kwargs)

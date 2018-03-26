@@ -34,7 +34,7 @@ def authenticate_interactively(func):
     return func_wrapper
 
 
-def add_auth_creds_from_self(add_creds_mixin_name='AddCredsMixin'):
+def add_auth_creds_from_self(creds_attribute_name='_AddCredsMixin__creds'):
     """A decorator to parameterize the real decorator
     ``_add_auth_creds_from_self`` to make it more flexible."""
     def _add_auth_creds_from_self(func_requiring_creds):
@@ -55,10 +55,7 @@ def add_auth_creds_from_self(add_creds_mixin_name='AddCredsMixin'):
         @wraps(func_requiring_creds)
         def func_wrapper(*args, **kwargs):
             instance = args[0]  # i.e.: self
-            class_name = add_creds_mixin_name
-            # name mangling hackery
-            name_mangled_name = '_%s__creds' % class_name
-            creds = getattr(instance, name_mangled_name)
+            creds = getattr(instance, creds_attribute_name)
             if creds is not None:
                 assert isinstance(creds, tuple), 'sanity check'
                 return func_requiring_creds(auth=creds, *args, **kwargs)
