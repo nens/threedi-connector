@@ -39,7 +39,7 @@ Simulation task metadata:
      u'subgrid_id': u'headless:1e0a2077d55044399a857c766e328645'}
 
 Information from 3Di API can be requested using the ``SimulationManager``.
-For example, getting the saved states and queued simulation info:
+For example, getting the saved states and queued simulation:
 
 .. code-block:: python
 
