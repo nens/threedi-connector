@@ -97,7 +97,7 @@ class BaseAPI(object):
 
     Note: barebones API client.
     """
-    def __init__(self, cache=None, host=HOST_STAGING, version='v1'):
+    def __init__(self, cache=None, host=HOST_PRODUCTION, version='v1'):
         # schema_url = urljoin(host, "api/v1/docs/")
         # endpoint_data = requests.get(
         #     schema_url, headers={'Accept': 'application/coreapi+json'}
@@ -226,7 +226,7 @@ class Simulation(object):
             # save_states=None,
             # use_saved_state=None,
             # store_results=None,
-            host=HOST_STAGING,
+            host=HOST_PRODUCTION,
             interactive=True,
             **sim_kwargs):
         self.sim_kwargs = sim_kwargs
@@ -256,7 +256,7 @@ class SimulationManager(object):
     """
     Manage saved states, queued simulations, etc.
     """
-    def __init__(self, host=HOST_STAGING, interactive=True):
+    def __init__(self, host=HOST_PRODUCTION, interactive=True):
         self.host = host
         if interactive:
             self._api = InteractiveAPI(host=host)
