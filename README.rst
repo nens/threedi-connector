@@ -38,6 +38,34 @@ Simulation task metadata:
      u'status': u'received',
      u'subgrid_id': u'headless:1e0a2077d55044399a857c766e328645'}
 
+Information from 3Di API can be requested using the ``SimulationManager``.
+For example, getting the saved states and queued simulation info:
+
+.. code-block:: python
+
+    >>> sim_manager = threedi_connector.SimulationManager()
+    >>> sim_manager.authenticate()  # authenticate once for this session
+    Username: <user username>
+    Password: <your pw>
+    >>> sim_manager.saved_states
+    [{'some': 'data...', ...}]
+    >>> sm.queued_tasks
+    [{'more': 'data...', ...}]
+
+Interactive mode is on by default. You can disable interactive prompts by
+authenticating using the ``.authenticate(username, password)`` method on
+``SimulationManager`` or ``Simulation`` objects. Note: if you call
+``.authenticate()`` without arguments, it will prompt for credentials.
+
+To disable interactivity completely it is safer to just instantiate without
+interactivity:
+
+.. code-block:: python
+
+    >>> sim_manager = threedi_connector.SimulationManager(interactive=False)
+    >>> simulation = threedi_connector.Simulation(interactive=False)
+
+
 Running tests
 -------------
 
