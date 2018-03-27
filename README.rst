@@ -57,8 +57,8 @@ authenticating using the ``.authenticate(username, password)`` method on
 ``SimulationManager`` or ``Simulation`` objects. Note: if you call
 ``.authenticate()`` without arguments, it will prompt for credentials.
 
-To disable interactivity completely it is safer to just instantiate without
-interactivity:
+To disable interactivity completely it is safer to just instantiate with
+``interactive=False``
 
 .. code-block:: python
 
