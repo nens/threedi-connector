@@ -28,7 +28,7 @@ Start a simulation:
     Password: <your pw>
     Simulation started.
 
-Simulation task metadata using the returned ``Simulation`` object:
+Get simulation task metadata using the returned ``Simulation`` object:
 
 .. code-block:: python
 
