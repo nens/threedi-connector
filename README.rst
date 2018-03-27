@@ -45,7 +45,7 @@ For example, getting the saved states and queued simulation:
 
     >>> sim_manager = threedi_connector.SimulationManager()
     >>> sim_manager.authenticate()  # authenticate once for this session
-    Username: <user username>
+    Username: <your username>
     Password: <your pw>
     >>> sim_manager.saved_states
     [{'some': 'data...', ...}]
