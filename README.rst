@@ -58,7 +58,7 @@ authenticating using the ``.authenticate(username, password)`` method on
 ``.authenticate()`` without arguments, it will prompt for credentials.
 
 To disable interactivity completely it is safer to just instantiate with
-``interactive=False``
+``interactive=False``:
 
 .. code-block:: python
 
