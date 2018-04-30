@@ -9,3 +9,6 @@ install:
 
 script:
     - pycodestyle --exclude=operational_task.py
+
+notifications:
+    email: false
