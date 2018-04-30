@@ -13,7 +13,7 @@ Install
 Use
 ---
 
-Import the threedi_connector module:
+Import the ``threedi_connector`` module:
 
 .. code-block:: python
 
