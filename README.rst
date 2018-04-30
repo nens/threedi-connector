@@ -77,11 +77,10 @@ To disable interactivity completely it is safer to just instantiate with
 Running tests
 -------------
 
-Tests are run with ``pytest``:
-
 .. code-block:: bash
 
     $ python setup.py test
+
 
 Design philosophy
 -----------------
