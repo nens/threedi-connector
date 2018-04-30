@@ -5,10 +5,11 @@ python:
     - "3.6"
 
 install:
-    - pip install --user pycodestyle
+    - pip install pycodestyle pytest
 
 script:
     - pycodestyle --exclude=operational_task.py
+    - pytest
 
 notifications:
     email: false
