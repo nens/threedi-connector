@@ -52,6 +52,9 @@ For example, getting the saved states and queued simulation:
     >>> sm.queued_tasks
     [{'more': 'data...', ...}]
 
+Interactive mode
+^^^^^^^^^^^^^^^^
+
 Interactive mode is on by default. You can disable interactive prompts by
 authenticating using the ``.authenticate(username, password)`` method on
 ``SimulationManager`` or ``Simulation`` objects. Note: if you call
