@@ -53,9 +53,9 @@ For example, getting the saved states and queued simulation:
     Username: <your username>
     Password: <your pw>
     >>> sim_manager.saved_states
-    [{'some': 'data...', ...}]
+    [{'some': 'data...', ...}, ...]
     >>> sm.queued_tasks
-    [{'more': 'data...', ...}]
+    [{'more': 'data...', ...}, ...]
 
 Interactive mode
 ^^^^^^^^^^^^^^^^
