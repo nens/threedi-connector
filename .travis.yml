@@ -5,7 +5,7 @@ python:
     - "3.6"
 
 install:
-    - pip install pycodestyle
+    - pip install --user pycodestyle
 
 script:
     - pycodestyle --exclude=operational_task.py
