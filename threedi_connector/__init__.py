@@ -290,7 +290,7 @@ def start_simulation(*args, **kwargs):
 # for testing purposes
 TEST_KWARGS = {
     "organisation_uuid": "61f5a464c35044c19bc7d4b42d7f58cb",
-    "model_slug": "v2_bergermeer-v2_bergermeer_bres_maalstop-54-3592fdb84205eb7059000881ca33f7258e59acbf",
+    "model_slug": "v2_bergermeer-v2_bergermeer_bres_maalstop-54-3592fdb84205eb7059000881ca33f7258e59acbf",  # noqa
     "start": "2016-10-18T00:00",
     "end": "2016-10-18T00:30",
     "scenario_name": "test-lib (this result can be deleted)",
