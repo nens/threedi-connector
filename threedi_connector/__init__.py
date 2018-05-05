@@ -252,7 +252,7 @@ class Simulation(object):
         raise NotImplementedError("boe")
 
 
-class SimulationManager(object):
+class Client(object):
     """
     Manage saved states, queued simulations, etc.
     """
