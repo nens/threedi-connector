@@ -31,7 +31,6 @@ Start a simulation:
     ...    end='2016-10-18T00:30')
     Username: <your username>
     Password: <your pw>
-    Simulation started.
 
 Get simulation task metadata using the returned ``Simulation`` object:
 
