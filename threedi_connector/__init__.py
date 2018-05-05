@@ -1,3 +1,4 @@
+import logging
 import datetime
 import json
 
@@ -21,6 +22,9 @@ DATETIME_FORMATS = [
     # this one is in ``data_json``, which is hard to parse for now
     # DATETIME_FORMAT_NO_MS,
 ]
+
+
+logger = logging.getLogger(__name__)
 
 
 def deserialize_datetime(pairs, dt_formats=None):
@@ -283,7 +287,7 @@ def start_simulation(*args, **kwargs):
     """Start a Simulation and return the instance."""
     sim = Simulation(*args, **kwargs)
     sim.start()
-    print("Simulation started.")
+    logger.info("Simulation started.")
     return sim
 
 
